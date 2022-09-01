@@ -23,7 +23,7 @@ public class CheckGroupWord1316 {
             if(check[tmp-'a']){
                 return false;
             } else{
-                if (i<str.length()-1 && tmp!=str.charAt(i+1)){
+                if (i<str.length()-1 && tmp!=str.charAt(i+1)){ //
                     check[tmp-'a']=true;
                 }
             }
