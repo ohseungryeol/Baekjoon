@@ -13,7 +13,6 @@ public class boj2292 {
         int count=1;
         //  n = 13;
         while(al.get(i)<n){
-
             al.add(al.get(i)+j);
             j+=6;
             i++;

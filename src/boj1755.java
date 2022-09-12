@@ -29,13 +29,13 @@ public class boj1755 {
             String num ="";
             String str = arr.get(i);
 
-            String[] str2 = str.split(" "); //공백 기준 쪼깸
+            String[] str2 = str.split(" "); //공백 기준 쪼깸(2자리숫자)
 
             if (str2.length>1){ //2자리 숫자이면
                 num+=stringToInt(str2[0]);
                 num += stringToInt(str2[1]);
                 i2 = parseInt(num);
-            } else { // 12자리 숫자이면
+            } else { // 1자리 숫자이면
                 i2 = stringToInt(str2[0]);
             }
 
