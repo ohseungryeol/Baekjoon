@@ -23,10 +23,10 @@ public class boj14501 {
          MAX = Math.max(MAX, earn);
         if (index>=N+1) return;
         //상담을 할때
-        if(index+Ti[index]<=N+1){
+        if(index+Ti[index]<=N+1){ //현재가 N일이고 상담소요기간이 1일이어도 상담가능. 7+1 =8
             DFS(index+Ti[index],earn+Pi[index]);
         }
-
+        //안할떄
         DFS(index + 1, earn);
 
 
