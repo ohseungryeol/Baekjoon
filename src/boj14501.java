@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
 public class boj14501 {
-    static int MAX=0;
+    static int MAX=0; //이익 최대값
     static int N;
     static int[] Pi;
     static int[] Ti;
@@ -20,16 +20,14 @@ public class boj14501 {
     }
 
     public static void DFS(int index, int earn){
-         MAX = Math.max(MAX, earn);
-        if (index>=N+1) return;
+         MAX = Math.max(MAX, earn); //원래 최대값과 새롭게 들어온 이익 비교
+        if (index==N+1) return; //N+1번쨰 되는 날 종료
         //상담을 할때
         if(index+Ti[index]<=N+1){ //현재가 N일이고 상담소요기간이 1일이어도 상담가능. 7+1 =8
             DFS(index+Ti[index],earn+Pi[index]);
         }
-        //안할떄
+        //안할떄 이익은 그대로
         DFS(index + 1, earn);
-
-
 
     }
 
