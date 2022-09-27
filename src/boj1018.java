@@ -1,51 +1,46 @@
 import java.util.Scanner;
 
 public class boj1018 {
+    public static int getSolution(int startRow, int startCol, String[] board){
+        String[] orgBoard = {"WBWBWBWB", "BWBWBWBW"};
+        int whiteSol =0;
+        for(int i = 0; i < 8 ; i++){
+            int row = startRow + i;
+            for(int j=0; j<8;j++){
+                int col = startCol + j;
+                if (board[row].charAt(col) != orgBoard[row%2].charAt(j))
+                    whiteSol++;
+            }
+        }
+        return Math.min(whiteSol, 64 - whiteSol);
+    }
+
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int M = sc.nextInt();
-        char[][] chess = new char[N][M];
-        sc.nextLine();
 
-        for (int i = 0; i < N; i++) {
-            String s = sc.nextLine();
-            for (int j = 0; j < M; j++) {
-                chess[i][j] = s.charAt(j);
-            }
+        // 0.input 받기
+        Scanner scan = new Scanner(System.in);
+        int row = scan.nextInt();
+        int col = scan.nextInt();
+        scan.nextLine();
+
+        String[] board = new String[row];
+        for (int i = 0; i < row; i++) {
+            board[i] = scan.nextLine();
         }
-        int answer = 0;
 
-        for (int i=0; i<N; i++){
-            for (int j=0; j<M-1; j++){
-                if(chess[i][j]=='W'){ //현재가 화이트면
-                    if(nextWhite(chess[i][j+1])){
-                        answer++;
-                        chess[i][j+1] ='B';
-                    }
-                } else{ //현재가 블랙이면
-                    if(nextBlack(chess[i][j+1])){
-                        answer++;
-                        chess[i][j+1] ='W';
-                    }
-                }
+        // 1.체스판 자르기
+        int sol = Integer.MAX_VALUE;
+        for (int i = 0; i <= row - 8; i++) {
+            for (int j = 0; j <= col - 8; j++) {
+                // 2. 현 체스판의 최소 비용 구하기
+                int curSol = getSolution(i,j,board);
+                // 3. 전체 최적의 값과 비교하여 갱신하기
+                if (sol> curSol)
+                    sol = curSol;
             }
         }
 
-        System.out.println(answer);
-    }
-
-    public static boolean nextWhite(char a){
-        if (a=='W'){ //a가 흰색이면
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean nextBlack(char a){
-        if (a=='B'){ //a가 흰색이면
-            return true;
-        }
-        return false;
+        System.out.println(sol);
+        scan.close();
     }
 }
