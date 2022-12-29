@@ -18,6 +18,7 @@ public class boj1260 {
         N = Integer.parseInt(st.nextToken());
         Edge = Integer.parseInt(st.nextToken());
         start = Integer.parseInt(st.nextToken());
+
         dCheck = new int[N + 1];
         qCheck = new int[N + 1];
         graph = new int[N + 1][N + 1];
