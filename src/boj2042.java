@@ -71,6 +71,7 @@ public class boj2042 {
 
     public static long getSum(int start, int end){
         long partSum =0;
+
         while(start<=end){
             if(start%2 ==1){
                 partSum+=tree[start];
