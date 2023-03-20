@@ -5,35 +5,38 @@ import java.util.Scanner;
 import java.util.Stack;
 
 public class boj9012 {
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
-        int T = Integer.parseInt(br.readLine());
+        int N = Integer.parseInt(br.readLine());
 
-        for (int i=0; i<T; i++){
-            String str = br.readLine();
-            sb.append(isVPS(str)).append('\n');
+        for (int i=0; i<N; i++){
+            String tmp = br.readLine();
+            IsVPS(tmp);
         }
-
-        System.out.print(sb);
     }
 
-    public static String isVPS(String str){
+    public static void IsVPS(String tmp){
         Stack<Character> stack = new Stack<>();
-        char[] ch =str.toCharArray();
+        char[] ch = tmp.toCharArray();
 
         for (int i=0; i<ch.length; i++){
-            if(ch[i]=='(')  stack.push(ch[i]);
-            else if (ch[i]==')'){
-                if(stack.empty()){
-                    stack.push(ch[i]);
-                    break;
-                } else{
-                    stack.pop();
+            if (ch[i]=='('){
+                stack.push(ch[i]);
+            } else if (ch[i]==')'){
+                if(stack.isEmpty()){
+                    System.out.println("NO");
+                    return;
                 }
+                stack.pop();
             }
         }
-        if (stack.empty()) return "YES";
-        else return "NO";
+
+        if (stack.isEmpty()){
+            System.out.println("YES");
+        } else{
+            System.out.println("NO");
+        }
+
     }
 }
