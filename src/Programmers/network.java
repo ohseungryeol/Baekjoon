@@ -19,6 +19,7 @@ public class network {
                 computers[i][j] = sc.nextInt();
             }
         }
+        //asdasdasdasdasdasd
         for (int i=0; i<N; i++){
             if(check[i]==0){
                 answer++;
