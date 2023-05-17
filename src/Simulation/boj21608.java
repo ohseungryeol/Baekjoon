@@ -86,8 +86,6 @@ public class boj21608 {
     }
 
 
-
-
     static class Seat implements Comparable<Seat>{
         int x,y,likeNum,emptyNum;
 
