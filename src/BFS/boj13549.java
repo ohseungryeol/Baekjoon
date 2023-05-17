@@ -59,8 +59,7 @@ public class boj13549 {
         System.out.println(bo.min);
     }
 }
-
-class Point{
+ class Point{
     int x;
     public Point(int x) {
         this.x = x;
