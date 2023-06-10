@@ -16,7 +16,7 @@ public class boj2473 {
         long[] arr = new long[N]; // 배열의 각 원소는 -10억이상 10억 이하의 정수
         long[] answer = new long[3]; // 출력 값인 세 용액을 넣을 배열
 
-        st =  new StringTokenizer(br.readLine());
+        st =  new StringTokenizer(br.readLine())    ;
         for (int i=0; i<N; i++){
             arr[i]=Long.parseLong(st.nextToken());
         }
