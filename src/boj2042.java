@@ -42,10 +42,12 @@ public class boj2042 {
             int s = Integer.parseInt(st.nextToken()); // 변경 시작 지점
             long e = Long.parseLong(st.nextToken()); // 변경 끝나는 지점
 
-
+            //1이면 s번째 수를 e번째 수 로 변경
+            //2이면 s번째 수 부터 e번째 수 까지 구간합 출력
             if (t==1){
                 changeVal((treeStart-1)+s,e);
             } else if (t==2){
+                //질의 인덱스를 트리 인덱스로 변경
                 s = s+(treeStart-1);
                 e = e + (treeStart - 1);
                 System.out.println(getSum(s, (int) e));
