@@ -22,7 +22,7 @@ public class 신고결과받기 {
             String tmp = report[i];
             String[] rep = tmp.split(" ");
 
-            String reporter = rep[0]; //신고자
+            String reporter = rep[0]; //신고자x
             String reported = rep[1]; // 신고 당한자
             if(reportInfo.containsKey(reporter) && reportInfo.get(reporter).contains(reported)){
                 continue;
