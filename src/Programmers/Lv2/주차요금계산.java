@@ -1,5 +1,7 @@
 package Programmers.Lv2;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class 주차요금계산 {
@@ -15,6 +17,20 @@ public class 주차요금계산 {
         int[] answer = {}; //차량 번호 오름차순으로 요금 return
         Map<String, String> infoMap = new HashMap<>();
         Map<String, Integer> totalParkingTimeMap = new HashMap<>();
+
+        LocalDateTime currentTime = LocalDateTime.now();
+
+        // LocalDateTime을 "yyyy-MM-dd-HH:mm:ss" 형식의 문자열로 포맷팅
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss");
+        String formattedTime = currentTime.format(formatter);
+
+        System.out.println("현재 시간 문자열: " + formattedTime);
+
+        // 문자열을 다시 LocalDateTime 객체로 변환
+        LocalDateTime parsedTime = LocalDateTime.parse(formattedTime, formatter);
+
+        System.out.println("변환된 LocalDateTime: " + parsedTime);
+
 
         for(String Info:records){
             String[] carInfo = Info.split(" ");
