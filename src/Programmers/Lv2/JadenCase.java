@@ -1,3 +1,5 @@
+package Programmers.Lv2;
+
 class JadenCase {
     public String solution(String s) {
         String answer = "";
