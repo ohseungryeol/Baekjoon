@@ -1,93 +1,24 @@
 package Simulation;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.PriorityQueue;
+import java.util.StringTokenizer;
 
 public class boj21608 {
+    static int[][] map;
+    static int N;
     static int[] dx = {-1, 0, 1, 0};
     static int[] dy = {0, -1, 0, 1};
-    static int[][] board;
-    static Map<Integer, Set<Integer>> prefer = new HashMap<>(); // key , value
-    static int n;
-    static PriorityQueue<Seat> queue = new PriorityQueue<>();
-
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-        n = Integer.parseInt(br.readLine());
-        board = new int[n][n];
-
-        for (int i=0; i<n*n; i++){
-            st = new StringTokenizer(br.readLine());
-            int stu = Integer.parseInt(st.nextToken());
-            prefer.put(stu, new HashSet<>());
-            for (int j=0; j<4; j++){
-                prefer.get(stu).add(Integer.parseInt(st.nextToken()));
-            }
-
-            findSeat(stu);
-            queue.clear();
-        }
-        int answer=0;
-        for (int i=0; i<n; i++){
-            for (int j=0; j<n; j++){
-                int cnt=0;
-                for (int k=0; k<4; k++){
-                    int nx =i+dx[k];
-                    int ny =j+dy[k];
-                    if(nx>=0 && nx<n && ny>=0 && ny<n){
-                        if(prefer.get(board[i][j]).contains(board[nx][ny])){
-                          cnt++;
-                        }
-                    }
-                }
-                if(cnt==1){
-                    answer+=1;
-                } else if (cnt==2){
-                    answer+=10;
-                } else if (cnt==3){
-                    answer+=100;
-                } else if (cnt==4){
-                    answer+=1000;
-                }
-            }
-        }
-
-        System.out.println(answer);
-    }
-
-    public static void findSeat(int student){
-        for (int x=0; x<n; x++){
-            for (int y=0; y<n; y++){
-                if(board[x][y]!=0) continue;
-                int likeCnt =0;
-                int emptyCnt=0;
-                for (int i=0; i<4; i++){
-                    int nx = x+dx[i];
-                    int ny = y+dy[i];
-
-                    if(nx>=0 && nx<n && ny>=0 && ny<n){
-                        if(prefer.get(student).contains(board[nx][ny])){
-                            likeCnt++;
-                        }
-                        if(board[nx][ny]==0){
-                            emptyCnt++;
-                        }
-                    }
-                }
-          //      System.out.printf("Student = %d이고 좌표는 %d %d %d %d\n",student,x,y,likeCnt,emptyCnt);
-                queue.add(new Seat(x, y, likeCnt, emptyCnt));
-            }
-        }
-        Seat seat = queue.poll();
-        //System.out.printf("Student가 %d 일때 최종 앉을 좌표는 %d %d 입니다.\n",student,seat.x,seat.y);
-        board[seat.x][seat.y]= student;
-    }
-
+    static PriorityQueue<Seat> pq = new PriorityQueue<>();
 
     static class Seat implements Comparable<Seat>{
-        int x,y,likeNum,emptyNum;
+        int x,y;
+        int likeNum;
+        int emptyNum;
 
         public Seat(int x, int y, int likeNum, int emptyNum) {
             this.x = x;
@@ -97,14 +28,91 @@ public class boj21608 {
         }
 
         @Override
-        public int compareTo(Seat other) {
-            if (likeNum != other.likeNum) return other.likeNum - this.likeNum;
-            // 인접 빈칸 수로 비교
-            if (emptyNum != other.emptyNum) return other.emptyNum - this.emptyNum;
-            // 행으로 비교 -> 위에 조건들에서 걸리지 않았다면 likeNum도 같고 emptyNum도 같은 것이다. 이 때 행으로 비교
-            if (x != other.x) return x - other.x;
-            // 열로 비교
-            return y - other.y;
+        public int compareTo(Seat o) {
+            if(this.likeNum==o.likeNum) return o.emptyNum-this.emptyNum;
+            if(this.likeNum==o.likeNum && this.emptyNum==o.emptyNum) return this.x-o.x;
+            if(this.likeNum==o.likeNum && this.emptyNum==o.emptyNum && this.x==o.x) return this.y-o.y;
+
+            return o.likeNum-this.likeNum; //1순위
+
         }
     }
+    public static void main(String[] args) throws IOException {
+        /*
+        *
+        1. 좋아하는 학생이 인접한 칸에 가장 많은 칸으로 배정 (1개씩 4방향 탐색)
+        2. 1 만족이 여러칸이면 인접한 칸중에서 비어있는 칸이 가장 많은 칸으로 (1 기준으로 탐색 )
+        3. 2 만족도 여러개면 행의 번호가 가장 작은 칸으로 -> 열로
+        *
+        * */
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(br.readLine());
+        map = new int[N][N];
+        HashMap<Integer, HashSet<Integer>> hm = new HashMap<>();
+        for (int i=0; i<N*N; i++){
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int num = Integer.parseInt(st.nextToken());
+            HashSet<Integer> set = new HashSet<>();
+            for (int j=0; j<4; j++){
+                set.add(Integer.parseInt(st.nextToken()));
+            }
+            hm.put(num, set);
+            findSeat(num, hm);
+            pq.clear();
+        }
+
+        // 만족도 조사
+        int answer =0;
+
+        for (int i=0; i<N; i++){
+            for (int j=0; j<N; j++){
+                int myNum = map[i][j];
+                int likeCount=0;
+                for (int k=0; k<4; k++){
+                    int nx = i+dx[k];
+                    int ny = j+dy[k];
+                    if(!isRange(nx,ny)) continue;
+                    //4방에 좋아하는 친구가 있는가
+                    if(hm.get(myNum).contains(map[nx][ny])) likeCount++;
+                }
+
+                if(likeCount==1) answer+=1;
+                else if (likeCount==2) answer+=10;
+                else if (likeCount==3) answer+=100;
+                else if (likeCount==4) answer+=1000;
+            }
+        }
+
+        System.out.println(answer);
+    }
+
+    public static void findSeat(int num, HashMap<Integer,HashSet<Integer>> hm){
+        //1. 좋아하는 학생이 인접한 칸에 가장 많은 칸으로 배정 (1개씩 4방향 탐색)
+
+        for (int i=0; i<N; i++){
+            for (int j=0; j<N; j++){
+                int emp =0;
+                int like =0;
+                if(map[i][j]!=0) continue; //이미 앉음
+                for (int k=0; k<4; k++){ //한칸 한칸 모두 4방향 탐색
+                    int nx = i+dx[k];
+                    int ny = j+dy[k];
+                    if(!isRange(nx,ny)) continue;
+                    if(hm.get(num).contains(map[nx][ny])) like++;
+                    if(map[nx][ny]==0) emp++;
+                }
+                pq.add(new Seat(i, j, like, emp));
+            }
+        }
+
+        Seat mySeat = pq.poll();
+        map[mySeat.x][mySeat.y]=num;
+    }
+
+    public static boolean isRange(int nx, int ny){
+        if(nx>=0 && nx<N && ny>=0 &&  ny<N) return true;
+        return false;
+    }
+
 }
