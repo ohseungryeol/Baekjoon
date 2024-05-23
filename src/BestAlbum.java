@@ -70,6 +70,7 @@ public class BestAlbum {
 
 
         /*anwer = 고유 번호 순서대로 return*/
+        ArrayList<String> s = new ArrayList<>();
 
         return answer;
     }

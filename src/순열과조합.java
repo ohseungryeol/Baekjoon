@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.Collections;
 
 public class 순열과조합 {
     static int r,n;
@@ -10,6 +11,9 @@ public class 순열과조합 {
         n =5; //학생 수
         r =2; //뽑는 학생 수
         result = new int[2];
+        String a = "asdasdd";
+        char[] charArray = a.toCharArray();
+
         repeatedCombination(0,0);
     }
 
@@ -41,6 +45,9 @@ public class 순열과조합 {
         }
 
     }
+
+
+
 
     public static void repeatedCombination(int start, int L){
         if (L==r){

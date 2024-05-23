@@ -72,6 +72,7 @@ goal: 더이상 먹을 물고기가 없을 때 까지 먹는다.
             while (!queue.isEmpty()) {
 
                 Point tmp = queue.poll();
+
                 visited[tmp.x][tmp.y]=true;
                 for (int i = 0; i < 4; i++) {
                     int nx = tmp.x + dx[i];
@@ -82,6 +83,7 @@ goal: 더이상 먹을 물고기가 없을 때 까지 먹는다.
                         queue.offer(new Point(nx, ny, tmp.dist + 1));
                         if (map[nx][ny] != 0 && map[nx][ny] < sharkLevel) {//먹을 수 있는 물고기인 경우
                             fishes.add(new Point(nx, ny, dis[nx][ny]));
+                            System.out.println(nx+","+ny);
                         }
                         visited[nx][ny]=true;
                     }
