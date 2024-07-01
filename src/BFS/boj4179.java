@@ -1,104 +1,128 @@
 package BFS;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Scanner;
+import java.util.StringTokenizer;
 
 public class boj4179 {
-    static int R,C;
-    static char[][] miro;
-    static int answer=0;
+    static int R, C;
+    static char[][] map;
+    static boolean[][] visited;
+    static boolean[][] fireVisted;
+    static int fireLen;
+    static int jeehunLen;
     static int[] dx = {-1, 0, 1, 0};
     static int[] dy = {0, -1, 0, 1};
-    static boolean[][] visited;
-    static Queue<Point> Jqueue = new LinkedList<>();
-    static Queue<Point> FQueue = new LinkedList<>();
+    static Queue<int[]> fire = new LinkedList<>();
+    static Queue<int[]> jeehun = new LinkedList<>();
 
-    static class Point{
-        int x,y;
-
-        public Point(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-    }
-    public static void main(String[] args) {
-        /*#: 벽
-    .: 지나갈 수 있는 공간
-    J: 지훈이의 미로에서의 초기위치 (지나갈 수 있는 공간)
-    F: 불이 난 공간*/
-        //지훈이가 불이 도달하기 전에 미로를 탈출 할 수 없는 경우 IMPOSSIBLE 을 출력한다.
-        //지훈이가 미로를 탈출할 수 있는 경우에는 가장 빠른 탈출시간을 출력한다.
-        Scanner sc = new Scanner(System.in);
-        R = sc.nextInt();
-        C = sc.nextInt();
-        miro = new char[R][C];
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        R = Integer.parseInt(st.nextToken());
+        C = Integer.parseInt(st.nextToken());
+        map = new char[R][C];
         visited = new boolean[R][C];
-        for (int i=0; i<R; i++){
-            String tmp = sc.next();
-            for (int j=0; j<C; j++){
-                miro[i][j]=tmp.charAt(j);
+        fireVisted = new boolean[R][C];
+        for (int i = 0; i < R; i++) {
+            String tmp = br.readLine();
+            for (int j = 0; j < C; j++) {
+                map[i][j] = tmp.charAt(j);
+                if (map[i][j] == 'J'){
+                    jeehun.offer(new int[]{i, j, 0});
+                    visited[i][j]=true;
+                }
+                else if (map[i][j] == 'F') {
+                    fire.offer(new int[]{i, j, 0});
+                    fireVisted[i][j] = true;
+                }
             }
         }
 
-        for (int i=0; i<R; i++){
-            for (int j=0; j<C; j++){
-                if(miro[i][j]=='J'){
-                    Jqueue.offer(new Point(i, j));
-                } else if (miro[i][j]=='F') FQueue.offer(new Point(i, j));
-            }
-        }
 
-        BFS();
-        if(answer==0){
+
+        int answer = BFS();
+        if (answer == 0) {
             System.out.println("IMPOSSIBLE");
+        } else {
+            System.out.println(answer);
         }
-
     }
 
-    public static void BFS(){
-        int cnt = 0;
-        while(!Jqueue.isEmpty()){
-            int fireSize = FQueue.size();
-            for (int i=0; i<fireSize; i++){
-                Point nowF = FQueue.poll();
-                for (int j=0; j<4; j++){
-                    int nx = nowF.x+dx[j];
-                    int ny = nowF.y+dy[j];
+    public static int BFS() {
+//  #F..#
+//  #.J.#
+//  ###.#
+//  ###.#
+//  ###.#
 
-                    // 범위를 벗어나면 pass
-                    if(nx < 0 || ny < 0 || nx >= R || ny >= C) continue;
-                    // 벽이거나 방문한 곳이면 pass
-                    if(miro[nx][ny] == '#' || miro[nx][ny] == 'F') continue;
-                    miro[nx][ny]='F';
-                    FQueue.offer(new Point(nx, ny));
-                }
-            }
+        while (!fire.isEmpty()) {
+            fireLen = fire.size();
+            //깊이가 0부터 확산
+            for (int f=0; f< fireLen; f++) {
+                int[] fTmp = fire.poll();
+                int fx = fTmp[0];
+                int fy = fTmp[1];
 
-            int jSize = Jqueue.size();
-            for (int i=0; i<jSize; i++){
-                Point nowJ = Jqueue.poll();
-                for (int j=0; j<4; j++){
-                    int nx = nowJ.x+dx[j];
-                    int ny = nowJ.y+dy[j];
+                // 불 먼저 4방향 확산
+                for (int i = 0; i < 4; i++) {
+                    int nfx = fx + dx[i];
+                    int nfy = fy + dy[i];
 
-                    if(nx<0 || nx>=R || ny<0 || ny>=C){
-                        System.out.println(++answer);
-                        return;
+                    if (isRange(nfx, nfy) && !fireVisted[nfx][nfy] && map[nfx][nfy] != '#') {
+                        fireVisted[nfx][nfy] = true;
+                        fire.offer(new int[]{nfx, nfy, 0});
                     }
-                    // 벽이거나 불이거나 방문한 곳이면 pass
-                    if(miro[nx][ny] == '#' || miro[nx][ny] == 'F' || miro[nx][ny] == 'J') continue;
-
-                    miro[nx][ny] = 'J';
-                    answer++;
-                    Jqueue.offer(new Point(nx,ny));
-
                 }
             }
+            jeehunLen = jeehun.size();
+            for (int x=0; x<jeehunLen; x++){
+                if (jeehun.isEmpty()) break;
+                int[] jTmp = jeehun.poll();
+                int jx = jTmp[0];
+                int jy = jTmp[1];
+                int cnt = jTmp[2];
+
+
+                if (jx == 0 || jy == 0 || jx == R - 1 || jy == C - 1) return cnt + 1;
+                if (isConfined(jx, jy)) return 0;
+
+                for (int i = 0; i < 4; i++) {
+                    int njx = jx + dx[i];
+                    int njy = jy + dy[i];
+
+                    if (isRange(njx, njy) && map[njx][njy] == '.' && !visited[njx][njy] && !fireVisted[njx][njy]) {
+                        visited[njx][njy] = true;
+                        jeehun.offer(new int[]{njx, njy, cnt + 1});
+                    }
+                }
+            }
+
         }
+
+
+        return 0;
     }
 
 
+    public static boolean isRange(int nx, int ny) {
+        return (nx >= 0 && nx < R && ny >= 0 && ny < C);
+    }
+
+    public static boolean isConfined(int x, int y) {
+
+        boolean flag = false;
+        for (int i = 0; i < 4; i++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            //갈 수있는 모든 방향이 #이면 갇힌 것
+            if (isRange(nx, ny) && map[nx][ny] != '#') return false;
+        }
+
+        return true;
+    }
 }
